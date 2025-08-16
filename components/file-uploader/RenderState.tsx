@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { CloudUploadIcon } from "lucide-react";
+import { Button } from "../ui/button";
 
 export function RenderEmptyState({ isDragActive }: { isDragActive: boolean }) {
   return (
@@ -12,6 +13,16 @@ export function RenderEmptyState({ isDragActive }: { isDragActive: boolean }) {
           )}
         />
       </div>
+
+      <p className="text-base font-medium text-foreground">
+        Drop your files here or{" "}
+        <span className="text-primary font-bold cursor-pointer">
+          click to upload
+        </span>
+      </p>
+      <Button className="mt-4" type="button">
+        Select File
+      </Button>
     </div>
   );
 }
