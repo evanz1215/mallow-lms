@@ -11,9 +11,11 @@ import {
   Italic,
   ListIcon,
   ListOrdered,
-  ListOrderedIcon,
+  Redo,
   Strikethrough,
+  Undo,
 } from "lucide-react";
+import { Button } from "../ui/button";
 import { Toggle } from "../ui/toggle";
 import {
   Tooltip,
@@ -32,7 +34,7 @@ export function Menubar({ editor }: IAppProps) {
   }
 
   return (
-    <div className="border border-input rounded-t-lg p-2 bg-card flex flex-wrap gap-1 items-center">
+    <div className="border border-input border-t-0 border-x-0 rounded-t-lg p-2 bg-card flex flex-wrap gap-1 items-center">
       <TooltipProvider>
         <div className="flex flex-wrap gap-1">
           <Tooltip>
@@ -243,6 +245,40 @@ export function Menubar({ editor }: IAppProps) {
               </Toggle>
             </TooltipTrigger>
             <TooltipContent>Align Right</TooltipContent>
+          </Tooltip>
+        </div>
+
+        <div className="w-px h-6 bg-border mx-2"></div>
+
+        <div className="flex flex-wrap gap-1">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                size="sm"
+                variant="ghost"
+                type="button"
+                onClick={() => editor.chain().focus().undo().run()}
+                disabled={!editor.can().undo()}
+              >
+                <Undo />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Undo</TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                size="sm"
+                variant="ghost"
+                type="button"
+                onClick={() => editor.chain().focus().redo().run()}
+                disabled={!editor.can().redo()}
+              >
+                <Redo />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Redo</TooltipContent>
           </Tooltip>
         </div>
       </TooltipProvider>
