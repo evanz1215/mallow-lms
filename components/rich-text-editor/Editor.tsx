@@ -5,7 +5,8 @@ import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Menubar } from "./Menubar";
 
-export function RichTextEditor() {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function RichTextEditor({ field }: { field: any }) {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -20,6 +21,10 @@ export function RichTextEditor() {
       },
     },
     immediatelyRender: false,
+    onUpdate: ({ editor }) => {
+      field.onChange(JSON.stringify(editor.getJSON()));
+    },
+    content: field.value ? JSON.parse(field.value) : "<p>Hello World</p>",
   });
 
   return (
