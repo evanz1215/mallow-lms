@@ -4,7 +4,11 @@ import React, { useCallback, useState } from "react";
 import { FileRejection, useDropzone } from "react-dropzone";
 import { Card, CardContent } from "../ui/card";
 import { cn } from "@/lib/utils";
-import { RenderEmptyState, RenderErrorState } from "./RenderState";
+import {
+  RenderEmptyState,
+  RenderErrorState,
+  RenderUploadedState,
+} from "./RenderState";
 import { toast } from "sonner";
 import { v4 as uuidv4 } from "uuid";
 
@@ -68,7 +72,53 @@ export function Uploader() {
       }
 
       const { presignedUrl, key } = await presignedResponse.json();
-    } catch (error) {}
+
+      await new Promise<void>((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+
+        xhr.upload.onprogress = event => {
+          if (event.lengthComputable) {
+            const percentageComplete = (event.loaded / event.total) * 100;
+
+            setFileState(prev => ({
+              ...prev,
+              progress: Math.round(percentageComplete),
+            }));
+          }
+        };
+
+        xhr.onload = () => {
+          if (xhr.status === 200 || xhr.status === 204) {
+            setFileState(prev => ({
+              ...prev,
+              progress: 100,
+              uploading: false,
+              key,
+            }));
+            toast.success("File uploaded successfully");
+
+            resolve();
+          } else {
+            reject(new Error("Upload failed..."));
+          }
+        };
+        xhr.onerror = () => {
+          reject(new Error("Upload failed"));
+        };
+
+        xhr.open("PUT", presignedUrl);
+        xhr.setRequestHeader("Content-Type", file.type);
+        xhr.send(file);
+      });
+    } catch {
+      toast.error("Something went wrong");
+      setFileState(prev => ({
+        ...prev,
+        uploading: false,
+        progress: 0,
+        error: true,
+      }));
+    }
   }
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -85,6 +135,8 @@ export function Uploader() {
         isDeleting: false,
         fileType: "image",
       });
+
+      uploadFile(file);
     }
   }, []);
 
@@ -106,6 +158,22 @@ export function Uploader() {
         toast.error("File is too large, max size is 5MB.");
       }
     }
+  }
+
+  function renderContent() {
+    if (fileState.uploading) {
+      return <h1>Uploading...</h1>;
+    }
+
+    if (fileState.error) {
+      return <RenderErrorState />;
+    }
+
+    if (fileState.objectUrl) {
+      return <RenderUploadedState previewUrl={fileState.objectUrl} />;
+    }
+
+    return <RenderEmptyState isDragActive={isDragActive} />;
   }
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -132,8 +200,7 @@ export function Uploader() {
     >
       <CardContent className="flex items-center justify-center h-full w-full p-4">
         <input {...getInputProps()} />
-        <RenderEmptyState isDragActive={isDragActive} />
-        {/* <RenderErrorState /> */}
+        {renderContent()}
       </CardContent>
     </Card>
   );
