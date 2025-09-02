@@ -172,8 +172,7 @@ export default function CourseCreationPage() {
                   <FormItem className="w-full">
                     <FormLabel>Thumbnail name</FormLabel>
                     <FormControl>
-                      {/* <Input placeholder="thumbnail url" {...field} /> */}
-                      <Uploader />
+                      <Uploader onChange={field.onChange} value={field.value} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -249,7 +248,8 @@ export default function CourseCreationPage() {
                         <Input
                           placeholder="Duration"
                           type="number"
-                          {...field}
+                          value={field.value}
+                          onChange={(e) => field.onChange(e.target.value)}
                         />
                       </FormControl>
                       <FormMessage />
@@ -264,7 +264,12 @@ export default function CourseCreationPage() {
                     <FormItem className="w-full">
                       <FormLabel>Price ($)</FormLabel>
                       <FormControl>
-                        <Input placeholder="Price" type="number" {...field} />
+                        <Input 
+                          placeholder="Price" 
+                          type="number" 
+                          value={field.value}
+                          onChange={(e) => field.onChange(e.target.value)}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
