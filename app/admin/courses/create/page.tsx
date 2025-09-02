@@ -249,7 +249,7 @@ export default function CourseCreationPage() {
                           placeholder="Duration"
                           type="number"
                           value={field.value}
-                          onChange={(e) => field.onChange(e.target.value)}
+                          onChange={(e) => field.onChange(Number(e.target.value))}
                         />
                       </FormControl>
                       <FormMessage />
@@ -268,7 +268,7 @@ export default function CourseCreationPage() {
                           placeholder="Price" 
                           type="number" 
                           value={field.value}
-                          onChange={(e) => field.onChange(e.target.value)}
+                          onChange={(e) => field.onChange(Number(e.target.value))}
                         />
                       </FormControl>
                       <FormMessage />
