@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/app/data/admin/require-admin";
 import arcjet, { detectBot, fixedWindow } from "@/lib/arcjet";
 import { auth } from "@/lib/auth";
 import { env } from "@/lib/env";
@@ -22,21 +23,20 @@ const aj = arcjet
   );
 
 export async function DELETE(request: Request) {
-  const session = await auth.api.getSession({ headers: await headers() });
-
   try {
-    const decision = await aj.protect(request, {
-      fingerprint: session?.user.id as string,
-    });
+    // const session = await requireAdmin();
+    // const decision = await aj.protect(request, {
+    //   fingerprint: session?.user.id as string,
+    // });
 
-    if (decision.isDenied()) {
-      return NextResponse.json(
-        {
-          error: "Request blocked by security rules",
-        },
-        { status: 429 }
-      );
-    }
+    // if (decision.isDenied()) {
+    //   return NextResponse.json(
+    //     {
+    //       error: "Request blocked by security rules",
+    //     },
+    //     { status: 429 }
+    //   );
+    // }
 
     const body = await request.json();
 
